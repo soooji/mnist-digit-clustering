@@ -39,8 +39,12 @@ class Reader:
             0x0D: ('>f4', 'f', 4),
             0x0E: ('>f8', 'd', 8)}
 
-        images_file = open(join(self.root_dir, data_folder + '/train-images.idx3-ubyte'), 'rb')
-        labels_file = open(join(self.root_dir, data_folder + '/train-labels.idx1-ubyte'), 'rb')
+        first_of_filename = data_folder
+        if data_folder == 'test':
+            first_of_filename = 't10k'
+
+        images_file = open(join(self.root_dir, data_folder + '/' + first_of_filename + '-images.idx3-ubyte'), 'rb')
+        labels_file = open(join(self.root_dir, data_folder + '/' + first_of_filename + '-labels.idx1-ubyte'), 'rb')
 
         images_file.seek(0)  # Sets file buffer t first
 
@@ -66,4 +70,6 @@ class Reader:
             st.unpack('>' + 'B' * images_count, labels_file.read(images_count))).reshape((images_count, 1))
         labels_array = [lbl[0] for lbl in labels_array]
 
-        return images_array.reshape(60000, 28 * 28), labels_array
+        # print(images_count)
+
+        return images_array.reshape(images_count, 28 * 28), labels_array
